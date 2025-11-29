@@ -10,7 +10,7 @@ from sklearn.preprocessing import LabelEncoder
 device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 
 BATCH_SIZE = 128
-EPOCHS = 30
+EPOCHS = 12
 LEARNING_RATE = 0.001
 EMBEDDING_DIM = 32
 
@@ -65,7 +65,7 @@ class NeuralCollaborativeFiltering(nn.Module):
         self.output = nn.Linear(32, 1)
         
         self.relu = nn.ReLU()
-        self.dropout = nn.Dropout(0.2)
+        self.dropout = nn.Dropout(0.4)
 
     def forward(self, user_idx, movie_idx):
         user_embed = self.user_embedding(user_idx)
@@ -87,7 +87,7 @@ class NeuralCollaborativeFiltering(nn.Module):
 model = NeuralCollaborativeFiltering(num_users, num_movies, EMBEDDING_DIM).to(device)
 
 criterion = nn.MSELoss()
-optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
+optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=1e-5)
 
 for epoch in range(EPOCHS):
     model.train()
